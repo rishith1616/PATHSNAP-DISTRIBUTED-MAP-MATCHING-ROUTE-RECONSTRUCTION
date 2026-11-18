@@ -1,7 +1,7 @@
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 import networkx as nx
 import numpy as np
@@ -22,13 +22,15 @@ def infer_trip_utm_epsg(lons: np.ndarray, lats: np.ndarray) -> int:
 class TripData:
     trip_id: str
     epsg: int
-    track_df: pd.DataFrame          # columns: lon, lat, timestamp, x, y, dt, speed_mps, gps_heading_rad, valid_heading
-    nodes_xy: np.ndarray            # shape (N_nodes, 2) in local UTM meters
-    arcs_df: pd.DataFrame           # columns: arc_id, from_node, to_node, x1, y1, x2, y2, length_m, bearing_rad
-    graph: nx.DiGraph               # directed road network graph with edge attribute arc_id & length_m
-    route_arcs: Optional[np.ndarray]        # ordered sequence of traversed arc_ids from .route
-    gt_arc_ids: Optional[np.ndarray]        # aligned ground-truth arc_id per GPS observation (len = N_gps)
-    alignment_mean_dist_m: Optional[float]  # diagnostic mean distance of GPS pings to aligned ground-truth arcs
+    track_df: pd.DataFrame
+    nodes_xy: np.ndarray
+    arcs_df: pd.DataFrame
+    graph: nx.DiGraph
+    route_arcs: Optional[np.ndarray]
+    gt_arc_ids: Optional[np.ndarray]
+    gt_align_dist_m: Optional[np.ndarray]
+    valid_train_mask: Optional[np.ndarray]
+    alignment_mean_dist_m: Optional[float]
 
 
 def load_trip_files(trip_dir: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame]]:
@@ -39,7 +41,6 @@ def load_trip_files(trip_dir: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Data
     arcs_path = trip_dir / f"{trip_id}.arcs"
     route_path = trip_dir / f"{trip_id}.route"
 
-    # Fallback discovery if prefix differs
     if not track_path.exists():
         for f in trip_dir.iterdir():
             nl = f.name.lower()
@@ -82,7 +83,6 @@ def point_to_segments_distance_and_pos(
     dy = y2 - y1
     seg_len_sq = dx * dx + dy * dy
 
-    # Handle degenerate zero-length segments safely
     safe_len_sq = np.where(seg_len_sq > 1e-12, seg_len_sq, 1.0)
     t_raw = ((px - x1) * dx + (py - y1) * dy) / safe_len_sq
     t_proj = np.where(seg_len_sq > 1e-12, np.clip(t_raw, 0.0, 1.0), 0.0)
@@ -91,7 +91,6 @@ def point_to_segments_distance_and_pos(
     proj_y = y1 + t_proj * dy
     dist_m = np.hypot(px - proj_x, py - proj_y)
 
-    # Signed cross-track offset: positive = left of arc direction, negative = right
     seg_len = np.sqrt(safe_len_sq)
     signed_cross_m = np.where(
         seg_len_sq > 1e-12,
@@ -101,63 +100,149 @@ def point_to_segments_distance_and_pos(
     return dist_m, t_proj, signed_cross_m
 
 
+def compute_smoothed_kinematics(
+    gx: np.ndarray,
+    gy: np.ndarray,
+    timestamps: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Compute denoised trajectory speed, smoothed multi-second heading, and local curvature
+    strictly within continuous GPS segments (never smoothing across time gaps > 10s).
+    """
+    T = len(gx)
+    dt = np.diff(timestamps, prepend=timestamps[0])
+    if T > 0:
+        dt[0] = 1.0
+    dt_safe = np.where(dt > 0.0, dt, 1.0)
+
+    dx1 = np.diff(gx, prepend=gx[0])
+    dy1 = np.diff(gy, prepend=gy[0])
+    step_dist = np.hypot(dx1, dy1)
+    if T > 1:
+        dx1[0] = gx[1] - gx[0]
+        dy1[0] = gy[1] - gy[0]
+        step_dist[0] = math.hypot(dx1[0], dy1[0])
+
+    raw_speed = step_dist / dt_safe
+    smooth_heading = np.arctan2(dx1, dy1)
+    smooth_speed = raw_speed.copy()
+    valid_heading = np.zeros(T, dtype=np.float64)
+
+    # Identify continuous segments separated by gaps > 10s
+    break_indices = np.flatnonzero(dt > 10.0)
+    seg_starts = np.concatenate([[0], break_indices])
+    seg_ends = np.concatenate([break_indices, [T]])
+
+    for s, e in zip(seg_starts, seg_ends):
+        seg_len = e - s
+        if seg_len < 2:
+            continue
+        for i in range(s, e):
+            # Expand symmetric window up to +-3 pings (or until cumulative chord >= 12m)
+            lo = i
+            hi = i
+            for w in range(1, 5):
+                cand_lo = max(s, i - w)
+                cand_hi = min(e - 1, i + w)
+                lo, hi = cand_lo, cand_hi
+                if math.hypot(gx[hi] - gx[lo], gy[hi] - gy[lo]) >= 12.0:
+                    break
+
+            chord_dx = gx[hi] - gx[lo]
+            chord_dy = gy[hi] - gy[lo]
+            chord_dist = math.hypot(chord_dx, chord_dy)
+            chord_dt = max(float(timestamps[hi] - timestamps[lo]), 1.0)
+
+            if chord_dist >= 3.0:
+                smooth_heading[i] = math.atan2(chord_dx, chord_dy)
+                smooth_speed[i] = chord_dist / chord_dt
+                valid_heading[i] = 1.0
+            else:
+                smooth_speed[i] = chord_dist / chord_dt
+                valid_heading[i] = 0.0
+
+    # Local trajectory turn angle (curvature proxy) between consecutive smoothed headings
+    heading_change = np.abs((np.diff(smooth_heading, prepend=smooth_heading[0]) + math.pi) % (2.0 * math.pi) - math.pi)
+    heading_change = np.where((valid_heading > 0.5) & (dt <= 10.0), heading_change, 0.0)
+
+    return dt, step_dist, smooth_speed, smooth_heading, valid_heading, heading_change
+
+
 def align_gps_to_route_dp(
     gps_x: np.ndarray,
     gps_y: np.ndarray,
+    dt: np.ndarray,
     route_arcs: np.ndarray,
     arcs_df: pd.DataFrame,
-    max_step_jump: int = 8,
-    step_penalty: float = 1.5,
-) -> Tuple[np.ndarray, float]:
+    base_step_jump: int = 8,
+    step_penalty: float = 1.0,
+) -> Tuple[np.ndarray, np.ndarray, float]:
     """
-    Monotonically align T GPS observations onto an ordered sequence of M traversed route arcs
-    using dynamic programming so each GPS point gets its exact ground-truth arc_id.
+    Gap-aware monotonic DP alignment of T GPS observations onto M traversed route arcs.
+    Dynamically widens the allowed arc transition window across large GPS time gaps
+    and displacement jumps so multi-minute dropouts never lag behind the vehicle.
     """
     T = len(gps_x)
     M = len(route_arcs)
     if M == 0:
-        return np.full(T, -1, dtype=np.int64), float("nan")
+        return np.full(T, -1, dtype=np.int64), np.full(T, np.nan), float("nan")
+
+    r_x1 = arcs_df["x1"].to_numpy(dtype=np.float64)[route_arcs]
+    r_y1 = arcs_df["y1"].to_numpy(dtype=np.float64)[route_arcs]
+    r_x2 = arcs_df["x2"].to_numpy(dtype=np.float64)[route_arcs]
+    r_y2 = arcs_df["y2"].to_numpy(dtype=np.float64)[route_arcs]
+
+    # Exact (T, M) Euclidean point-to-segment distance matrix
+    dx = (r_x2 - r_x1)[None, :]
+    dy = (r_y2 - r_y1)[None, :]
+    seg_len_sq = dx * dx + dy * dy
+    safe_len_sq = np.where(seg_len_sq > 1e-12, seg_len_sq, 1.0)
+
+    px = gps_x[:, None]
+    py = gps_y[:, None]
+    t_raw = ((px - r_x1[None, :]) * dx + (py - r_y1[None, :]) * dy) / safe_len_sq
+    t_proj = np.where(seg_len_sq > 1e-12, np.clip(t_raw, 0.0, 1.0), 0.0)
+    proj_x = r_x1[None, :] + t_proj * dx
+    proj_y = r_y1[None, :] + t_proj * dy
+    cost_mat = np.hypot(px - proj_x, py - proj_y)
+
     if M == 1:
-        x1 = np.array([arcs_df.iloc[route_arcs[0]]["x1"]])
-        y1 = np.array([arcs_df.iloc[route_arcs[0]]["y1"]])
-        x2 = np.array([arcs_df.iloc[route_arcs[0]]["x2"]])
-        y2 = np.array([arcs_df.iloc[route_arcs[0]]["y2"]])
-        dists = [point_to_segments_distance_and_pos(gps_x[t], gps_y[t], x1, y1, x2, y2)[0][0] for t in range(T)]
-        return np.full(T, route_arcs[0], dtype=np.int64), float(np.mean(dists))
-
-    r_x1 = arcs_df["x1"].to_numpy()[route_arcs]
-    r_y1 = arcs_df["y1"].to_numpy()[route_arcs]
-    r_x2 = arcs_df["x2"].to_numpy()[route_arcs]
-    r_y2 = arcs_df["y2"].to_numpy()[route_arcs]
-
-    # Cost matrix C[t, j] = distance (meters) from GPS ping t to route step j
-    cost_mat = np.empty((T, M), dtype=np.float64)
-    for t in range(T):
-        cost_mat[t], _, _ = point_to_segments_distance_and_pos(
-            gps_x[t], gps_y[t], r_x1, r_y1, r_x2, r_y2
-        )
+        d0 = cost_mat[:, 0]
+        return np.full(T, route_arcs[0], dtype=np.int64), d0, float(np.mean(d0))
 
     INF = 1e18
     dp = np.full((T, M), INF, dtype=np.float64)
     backptr = np.zeros((T, M), dtype=np.int32)
 
-    # Allow starting on early route segments (in case initial GPS pings start slightly downstream)
-    init_window = min(M, 5)
+    # Allow starting anywhere on the route if initial GPS pings begin mid-corridor
+    init_window = M if np.min(cost_mat[0, : min(M, 10)]) > 50.0 else min(M, 10)
     dp[0, :init_window] = cost_mat[0, :init_window]
 
+    step_disp = np.hypot(np.diff(gps_x, prepend=gps_x[0]), np.diff(gps_y, prepend=gps_y[0]))
+
     for t in range(1, T):
+        prev_dp = dp[t - 1]
+        # Scale jump allowance dynamically during time gaps (>5s) or high displacement (>50m)
+        if dt[t] > 5.0 or step_disp[t] > 50.0:
+            est_arcs_jumped = int(max(dt[t] * 1.5, step_disp[t] / 15.0)) + 15
+            max_jump = min(M - 1, max(base_step_jump, est_arcs_jumped))
+            curr_penalty = 0.15
+        else:
+            max_jump = min(M - 1, base_step_jump)
+            curr_penalty = step_penalty
+
         for j in range(M):
-            prev_start = max(0, j - max_step_jump)
-            prev_costs = dp[t - 1, prev_start : j + 1]
-            # Small penalty for jumping multiple arcs in 1 step to keep alignment smooth
+            prev_start = max(0, j - max_jump)
+            prev_costs = prev_dp[prev_start : j + 1]
             jumps = np.arange(j - prev_start, -1, -1, dtype=np.float64)
-            total_prev = prev_costs + step_penalty * jumps
+            total_prev = prev_costs + curr_penalty * jumps
             best_offset = int(np.argmin(total_prev))
             dp[t, j] = cost_mat[t, j] + total_prev[best_offset]
             backptr[t, j] = prev_start + best_offset
 
-    # End near the tail of the reference route
-    end_start = max(0, M - 5)
+    # Allow ending anywhere if .route stops early (partial reference route)
+    tail_window = M if np.min(cost_mat[T - 1, max(0, M - 10) :]) > 50.0 else min(M, 10)
+    end_start = max(0, M - tail_window)
     last_j = end_start + int(np.argmin(dp[T - 1, end_start:]))
 
     aligned_steps = np.empty(T, dtype=np.int32)
@@ -166,14 +251,15 @@ def align_gps_to_route_dp(
         aligned_steps[t - 1] = backptr[t, aligned_steps[t]]
 
     gt_arc_ids = route_arcs[aligned_steps].astype(np.int64)
-    mean_dist = float(np.mean(cost_mat[np.arange(T), aligned_steps]))
-    return gt_arc_ids, mean_dist
+    aligned_dists = cost_mat[np.arange(T), aligned_steps]
+    mean_dist = float(np.mean(aligned_dists))
+    return gt_arc_ids, aligned_dists, mean_dist
 
 
 def build_trip_data(trip_dir: Path, include_ground_truth: bool = True) -> TripData:
     """
-    Load raw files for a single trip, project coordinates to the trip's local UTM CRS,
-    compute trajectory kinematics and directed road graph, and optionally align ground truth.
+    Load raw files for a single trip, project coordinates to local UTM CRS,
+    compute smoothed trajectory kinematics & directed road graph, and optionally align ground truth.
     """
     trip_id = trip_dir.name
     track_df, nodes_df, arcs_df, route_df = load_trip_files(trip_dir)
@@ -186,30 +272,18 @@ def build_trip_data(trip_dir: Path, include_ground_truth: bool = True) -> TripDa
     track_df["x"] = gx
     track_df["y"] = gy
 
-    # 2. Trajectory kinematics (dt, speed, heading)
-    dt = track_df["timestamp"].diff().fillna(1.0).to_numpy(dtype=np.float64)
-    dt_safe = np.where(dt > 0.0, dt, 1.0)
-    dx_gps = np.diff(gx, prepend=gx[0])
-    dy_gps = np.diff(gy, prepend=gy[0])
-    step_dist = np.hypot(dx_gps, dy_gps)
-
-    # Use forward difference for index 0 so initial heading is defined if vehicle moves
-    if len(gx) > 1:
-        dx_gps[0] = gx[1] - gx[0]
-        dy_gps[0] = gy[1] - gy[0]
-        step_dist[0] = math.hypot(dx_gps[0], dy_gps[0])
-
-    speed_mps = step_dist / dt_safe
-    # Bearing in radians: atan2(dx, dy) -> 0 = North, pi/2 = East (matches compass convention)
-    gps_heading = np.arctan2(dx_gps, dy_gps)
-    # Heading is reliable when vehicle moved >= 1.0 m and timestamp gap <= 10 s
-    valid_heading = (step_dist >= 1.0) & (dt <= 10.0)
+    # 2. Smoothed trajectory kinematics
+    timestamps = track_df["timestamp"].to_numpy(dtype=np.float64)
+    dt, step_dist, smooth_speed, smooth_heading, valid_heading, curvature = compute_smoothed_kinematics(
+        gx, gy, timestamps
+    )
 
     track_df["dt"] = dt
     track_df["step_dist_m"] = step_dist
-    track_df["speed_mps"] = speed_mps
-    track_df["gps_heading_rad"] = gps_heading
-    track_df["valid_heading"] = valid_heading.astype(np.float64)
+    track_df["speed_mps"] = smooth_speed
+    track_df["gps_heading_rad"] = smooth_heading
+    track_df["valid_heading"] = valid_heading
+    track_df["curvature_rad"] = curvature
 
     # 3. Project road network nodes and enrich arcs table
     nx_arr, ny_arr = transformer.transform(nodes_df["lon"].to_numpy(), nodes_df["lat"].to_numpy())
@@ -239,30 +313,28 @@ def build_trip_data(trip_dir: Path, include_ground_truth: bool = True) -> TripDa
     G = nx.DiGraph()
     G.add_nodes_from(range(len(nodes_xy)))
     for aid, u, v, w in zip(arcs_df["arc_id"], from_idx, to_idx, length_m):
-        # If parallel edges exist between (u, v), keep the shorter one for routing, store all arc_ids
-        if G.has_edge(int(u), int(v)):
-            G[int(u)][int(v)]["arc_ids"].append(int(aid))
-            if float(w) < G[int(u)][int(v)]["weight"]:
-                G[int(u)][int(v)]["weight"] = float(w)
-                G[int(u)][int(v)]["primary_arc_id"] = int(aid)
+        u_i, v_i, a_i, w_f = int(u), int(v), int(aid), float(w)
+        if G.has_edge(u_i, v_i):
+            G[u_i][v_i]["arc_ids"].append(a_i)
+            if w_f < G[u_i][v_i]["weight"]:
+                G[u_i][v_i]["weight"] = w_f
+                G[u_i][v_i]["primary_arc_id"] = a_i
         else:
-            G.add_edge(
-                int(u),
-                int(v),
-                weight=float(w),
-                primary_arc_id=int(aid),
-                arc_ids=[int(aid)],
-            )
+            G.add_edge(u_i, v_i, weight=w_f, primary_arc_id=a_i, arc_ids=[a_i])
 
-    # 5. Optional ground-truth route alignment (strictly disabled during blind inference)
+    # 5. Optional gap-aware ground-truth alignment + partial-route outlier mask
     route_arcs = None
     gt_arc_ids = None
+    gt_align_dist_m = None
+    valid_train_mask = None
     mean_align_dist = None
     if include_ground_truth and route_df is not None:
         route_arcs = route_df["arc_id"].to_numpy(dtype=np.int64)
-        gt_arc_ids, mean_align_dist = align_gps_to_route_dp(
-            gx, gy, route_arcs, arcs_df
+        gt_arc_ids, gt_align_dist_m, mean_align_dist = align_gps_to_route_dp(
+            gx, gy, dt, route_arcs, arcs_df
         )
+        # Observations > 75m from reference route correspond to truncated .route files or extreme dropouts
+        valid_train_mask = gt_align_dist_m <= 75.0
 
     return TripData(
         trip_id=trip_id,
@@ -273,5 +345,7 @@ def build_trip_data(trip_dir: Path, include_ground_truth: bool = True) -> TripDa
         graph=G,
         route_arcs=route_arcs,
         gt_arc_ids=gt_arc_ids,
+        gt_align_dist_m=gt_align_dist_m,
+        valid_train_mask=valid_train_mask,
         alignment_mean_dist_m=mean_align_dist,
     )

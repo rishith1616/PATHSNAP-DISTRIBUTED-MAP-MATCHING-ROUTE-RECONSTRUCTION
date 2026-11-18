@@ -1,0 +1,1129 @@
+{
+  "logistic_regression": {
+    "spec": {
+      "name": "Logistic Regression",
+      "slug": "logistic_regression",
+      "family": "Linear & Probabilistic",
+      "uses_scaled_features": true,
+      "key_config": "L2 penalty, C=1.0, lbfgs, max_iter=500",
+      "loss_objective": "Binary Cross-Entropy (Log Loss) with L2 regularization"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.8958006073934444,
+        "obs_macro_f1": 0.8231533621877564,
+        "obs_logloss": 0.3034003224287422,
+        "route_continuity": 0.9359835368461853,
+        "pair_accuracy": 0.9765483311460058,
+        "pair_precision": 0.9117119077408475,
+        "pair_recall": 0.8965923072808003,
+        "pair_macro_f1": 0.9453649093687833,
+        "pair_logloss": 0.07266122647451657,
+        "confusion_matrix": [
+          [
+            262630,
+            3246
+          ],
+          [
+            3866,
+            33520
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.923567437914997,
+        "obs_macro_f1": 0.8069064204909941,
+        "obs_logloss": 0.2739204066959509,
+        "route_continuity": 0.9243039968170537,
+        "pair_accuracy": 0.9790817583081091,
+        "pair_precision": 0.9370914287451731,
+        "pair_recall": 0.9060175794455714,
+        "pair_macro_f1": 0.9546152842485779,
+        "pair_logloss": 0.06854370960824348,
+        "confusion_matrix": [
+          [
+            215656,
+            2069
+          ],
+          [
+            3197,
+            30820
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8411939000190285,
+        "obs_macro_f1": 0.782126142174514,
+        "obs_logloss": 0.5015488389318241,
+        "route_continuity": 0.9188258993931437,
+        "pair_accuracy": 0.9577841144107968,
+        "pair_precision": 0.8580784782732502,
+        "pair_recall": 0.821470435896737,
+        "pair_macro_f1": 0.9075370298690166,
+        "pair_logloss": 0.12134822664078032,
+        "confusion_matrix": [
+          [
+            231524,
+            4984
+          ],
+          [
+            6549,
+            30134
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8411161246381746,
+        "obs_macro_f1": 0.7466039149012964,
+        "obs_logloss": 0.46240071599532134,
+        "route_continuity": 0.932931030023552,
+        "pair_accuracy": 0.9593599597730048,
+        "pair_precision": 0.8637873008750281,
+        "pair_recall": 0.8368256314393775,
+        "pair_macro_f1": 0.9132932121795172,
+        "pair_logloss": 0.11751677699283954,
+        "confusion_matrix": [
+          [
+            282027,
+            6071
+          ],
+          [
+            7507,
+            38499
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.894140131515014,
+        "obs_macro_f1": 0.8040877124066996,
+        "obs_logloss": 0.33306340784743454,
+        "route_continuity": 0.9417565632078084,
+        "pair_accuracy": 0.9723532905482323,
+        "pair_precision": 0.9048641395504864,
+        "pair_recall": 0.8746149606043903,
+        "pair_macro_f1": 0.9368414570263212,
+        "pair_logloss": 0.07930810732939314,
+        "confusion_matrix": [
+          [
+            208775,
+            2836
+          ],
+          [
+            3867,
+            26974
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.8764977944125117,
+      "obs_macro_f1": 0.7932469772958355,
+      "obs_logloss": 0.3764850587317517,
+      "route_continuity": 0.9309676285869374,
+      "pair_accuracy": 0.9687083333629946,
+      "pair_precision": 0.8934140760171904,
+      "pair_recall": 0.8655729372259142,
+      "pair_macro_f1": 0.9306488914999502,
+      "pair_logloss": 0.09191463374908626,
+      "confusion_matrix": [
+        [
+          1200721,
+          19097
+        ],
+        [
+          24860,
+          160073
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8816805845511482,
+      "obs_macro_f1": 0.8211622239241008,
+      "obs_logloss": 0.3771797099441441,
+      "route_continuity": 0.9456441476663237,
+      "pair_accuracy": 0.9688021020900858,
+      "pair_precision": 0.8915165979605121,
+      "pair_recall": 0.8598932719472638,
+      "pair_macro_f1": 0.9287938776941953,
+      "pair_logloss": 0.08809590733087594,
+      "confusion_matrix": [
+        [
+          128832,
+          2000
+        ],
+        [
+          2678,
+          16436
+        ]
+      ]
+    },
+    "train_time_s": 1.8951027999864891,
+    "student_inf_time_ms": 4.167500010225922
+  },
+  "extra_trees": {
+    "spec": {
+      "name": "Extra Trees",
+      "slug": "extra_trees",
+      "family": "Randomized Ensemble",
+      "uses_scaled_features": false,
+      "key_config": "n_estimators=120, max_depth=20, min_samples_leaf=10",
+      "loss_objective": "Extremely Randomized Gini Impurity smoothing over GPS noise"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.8961671379202011,
+        "obs_macro_f1": 0.8241131354370801,
+        "obs_logloss": 0.2545900271489792,
+        "route_continuity": 0.9319378666320768,
+        "pair_accuracy": 0.977807968027646,
+        "pair_precision": 0.915280411812517,
+        "pair_recall": 0.903627026159525,
+        "pair_macro_f1": 0.9483857159136748,
+        "pair_logloss": 0.06155568770668237,
+        "confusion_matrix": [
+          [
+            262749,
+            3127
+          ],
+          [
+            3603,
+            33783
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.92862784099219,
+        "obs_macro_f1": 0.8078123754184174,
+        "obs_logloss": 0.2206747605550363,
+        "route_continuity": 0.9216241978000225,
+        "pair_accuracy": 0.9811672267639091,
+        "pair_precision": 0.9403730445246691,
+        "pair_recall": 0.9188934944292559,
+        "pair_macro_f1": 0.9593205006493283,
+        "pair_logloss": 0.05612194269068779,
+        "confusion_matrix": [
+          [
+            215743,
+            1982
+          ],
+          [
+            2759,
+            31258
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8498382580803001,
+        "obs_macro_f1": 0.7828316314008386,
+        "obs_logloss": 0.41919590405201285,
+        "route_continuity": 0.916218018637211,
+        "pair_accuracy": 0.960254913229206,
+        "pair_precision": 0.8714865214764521,
+        "pair_recall": 0.8257776081563667,
+        "pair_macro_f1": 0.9125773688525587,
+        "pair_logloss": 0.10070218638454342,
+        "confusion_matrix": [
+          [
+            232041,
+            4467
+          ],
+          [
+            6391,
+            30292
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8426059935297122,
+        "obs_macro_f1": 0.7460902814297679,
+        "obs_logloss": 0.3981998530378721,
+        "route_continuity": 0.9335612395995327,
+        "pair_accuracy": 0.9610899600124512,
+        "pair_precision": 0.8826871347741397,
+        "pair_recall": 0.8273920792940052,
+        "pair_macro_f1": 0.915848074971589,
+        "pair_logloss": 0.10046641753856102,
+        "confusion_matrix": [
+          [
+            283039,
+            5059
+          ],
+          [
+            7941,
+            38065
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8954682388001685,
+        "obs_macro_f1": 0.8026714406091318,
+        "obs_logloss": 0.29681468431710445,
+        "route_continuity": 0.9408037564968406,
+        "pair_accuracy": 0.973796875257783,
+        "pair_precision": 0.9086509578799813,
+        "pair_recall": 0.8827534775136993,
+        "pair_macro_f1": 0.9402675508471176,
+        "pair_logloss": 0.07044279763082459,
+        "confusion_matrix": [
+          [
+            208874,
+            2737
+          ],
+          [
+            3616,
+            27225
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.8978906563293677,
+      "obs_macro_f1": 0.810135341386264,
+      "obs_logloss": 0.2495918624600762,
+      "route_continuity": 0.9335347127711415,
+      "pair_accuracy": 0.9749770599914148,
+      "pair_precision": 0.919533919668366,
+      "pair_recall": 0.8875971297713225,
+      "pair_macro_f1": 0.9444564290255764,
+      "pair_logloss": 0.06374026379021251,
+      "confusion_matrix": [
+        [
+          1205454,
+          14364
+        ],
+        [
+          20787,
+          164146
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8825156576200418,
+      "obs_macro_f1": 0.8160934133138762,
+      "obs_logloss": 0.32197942388133394,
+      "route_continuity": 0.9434606048456132,
+      "pair_accuracy": 0.9703159804196178,
+      "pair_precision": 0.8972636141966946,
+      "pair_recall": 0.8663283457151826,
+      "pair_macro_f1": 0.9322785148910859,
+      "pair_logloss": 0.07489788496481313,
+      "confusion_matrix": [
+        [
+          128936,
+          1896
+        ],
+        [
+          2555,
+          16559
+        ]
+      ]
+    },
+    "train_time_s": 22.06519679998746,
+    "student_inf_time_ms": 1150.052000011783
+  },
+  "random_forest": {
+    "spec": {
+      "name": "Random Forest",
+      "slug": "random_forest",
+      "family": "Bagging Ensemble",
+      "uses_scaled_features": false,
+      "key_config": "n_estimators=120, max_depth=18, min_samples_leaf=12",
+      "loss_objective": "Bootstrap-aggregated Gini Impurity reduction"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.9012200230390617,
+        "obs_macro_f1": 0.8345795617797572,
+        "obs_logloss": 0.23525933100158955,
+        "route_continuity": 0.9388336460489215,
+        "pair_accuracy": 0.9794567074015208,
+        "pair_precision": 0.9238680888114933,
+        "pair_recall": 0.9082009308297223,
+        "pair_macro_f1": 0.9521327421446145,
+        "pair_logloss": 0.05684107306056724,
+        "confusion_matrix": [
+          [
+            263078,
+            2798
+          ],
+          [
+            3432,
+            33954
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9308801591248135,
+        "obs_macro_f1": 0.817192496584394,
+        "obs_logloss": 0.20651347471408502,
+        "route_continuity": 0.9268130538197301,
+        "pair_accuracy": 0.9825098712173574,
+        "pair_precision": 0.948669777589237,
+        "pair_recall": 0.9203633477378957,
+        "pair_macro_f1": 0.962107173899483,
+        "pair_logloss": 0.05198562344634444,
+        "confusion_matrix": [
+          [
+            216031,
+            1694
+          ],
+          [
+            2709,
+            31308
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8550031261043304,
+        "obs_macro_f1": 0.7950092621145731,
+        "obs_logloss": 0.4053517846727022,
+        "route_continuity": 0.9220749424110011,
+        "pair_accuracy": 0.9621510225446666,
+        "pair_precision": 0.8809985247751005,
+        "pair_recall": 0.8302756045034485,
+        "pair_macro_f1": 0.9165613915770383,
+        "pair_logloss": 0.09627686144711674,
+        "confusion_matrix": [
+          [
+            232394,
+            4114
+          ],
+          [
+            6226,
+            30457
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8430529541971735,
+        "obs_macro_f1": 0.7547427392571309,
+        "obs_logloss": 0.3927431171020438,
+        "route_continuity": 0.9397286364555585,
+        "pair_accuracy": 0.9619759116921677,
+        "pair_precision": 0.8894788547904192,
+        "pair_recall": 0.8265661000739034,
+        "pair_macro_f1": 0.9174725007269036,
+        "pair_logloss": 0.09857643736138275,
+        "confusion_matrix": [
+          [
+            283373,
+            4725
+          ],
+          [
+            7979,
+            38027
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.900165203589129,
+        "obs_macro_f1": 0.8124993140987347,
+        "obs_logloss": 0.2846486019263866,
+        "route_continuity": 0.9463790318965146,
+        "pair_accuracy": 0.9755333014369855,
+        "pair_precision": 0.91955533097524,
+        "pair_recall": 0.8850880321649752,
+        "pair_macro_f1": 0.9440072138545894,
+        "pair_logloss": 0.06700668609429165,
+        "confusion_matrix": [
+          [
+            209223,
+            2388
+          ],
+          [
+            3544,
+            27297
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.9204758722095977,
+      "obs_macro_f1": 0.8392966836558144,
+      "obs_logloss": 0.19600964439807284,
+      "route_continuity": 0.9441548683493182,
+      "pair_accuracy": 0.9809987677531463,
+      "pair_precision": 0.9447895526835054,
+      "pair_recall": 0.9087723662083025,
+      "pair_macro_f1": 0.9577607889103985,
+      "pair_logloss": 0.05074534524846763,
+      "confusion_matrix": [
+        [
+          1209997,
+          9821
+        ],
+        [
+          16871,
+          168062
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8866388308977036,
+      "obs_macro_f1": 0.8231091289876717,
+      "obs_logloss": 0.30523223788072174,
+      "route_continuity": 0.9477162849027481,
+      "pair_accuracy": 0.9721366358555746,
+      "pair_precision": 0.9095645497422398,
+      "pair_recall": 0.8676886052108402,
+      "pair_macro_f1": 0.9361098551529969,
+      "pair_logloss": 0.07031129194013543,
+      "confusion_matrix": [
+        [
+          129183,
+          1649
+        ],
+        [
+          2529,
+          16585
+        ]
+      ]
+    },
+    "train_time_s": 51.68658489995869,
+    "student_inf_time_ms": 1218.8769000349566
+  },
+  "hist_gbdt": {
+    "spec": {
+      "name": "HistGradientBoosting",
+      "slug": "hist_gbdt",
+      "family": "Histogram GBDT",
+      "uses_scaled_features": false,
+      "key_config": "max_iter=300, lr=0.05, max_leaf_nodes=63, l2_regularization=1.0",
+      "loss_objective": "Quantile-binned Binary Log Loss with L2 leaf penalty"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.9005655042412818,
+        "obs_macro_f1": 0.8386722250613574,
+        "obs_logloss": 0.23451701044153533,
+        "route_continuity": 0.943412852720913,
+        "pair_accuracy": 0.9789587881106107,
+        "pair_precision": 0.9207719241104144,
+        "pair_recall": 0.9073984914138983,
+        "pair_macro_f1": 0.9510242897565601,
+        "pair_logloss": 0.056404204552858564,
+        "confusion_matrix": [
+          [
+            262957,
+            2919
+          ],
+          [
+            3462,
+            33924
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9323134524819375,
+        "obs_macro_f1": 0.8232206278290819,
+        "obs_logloss": 0.19932411926236623,
+        "route_continuity": 0.9306326978951527,
+        "pair_accuracy": 0.9825019265756211,
+        "pair_precision": 0.9480963622056776,
+        "pair_recall": 0.9209218919951789,
+        "pair_macro_f1": 0.9621091020434278,
+        "pair_logloss": 0.05040414791391227,
+        "confusion_matrix": [
+          [
+            216010,
+            1715
+          ],
+          [
+            2690,
+            31327
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8619621061788132,
+        "obs_macro_f1": 0.7975997759027833,
+        "obs_logloss": 0.4065505047255618,
+        "route_continuity": 0.9262287679604855,
+        "pair_accuracy": 0.9633004015505635,
+        "pair_precision": 0.8823107592576657,
+        "pair_recall": 0.8385355614317259,
+        "pair_macro_f1": 0.9193758605685417,
+        "pair_logloss": 0.09697434826730282,
+        "confusion_matrix": [
+          [
+            232405,
+            4103
+          ],
+          [
+            5923,
+            30760
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8445853907713264,
+        "obs_macro_f1": 0.7638516649229992,
+        "obs_logloss": 0.39412352561369535,
+        "route_continuity": 0.9473888017284349,
+        "pair_accuracy": 0.9614640950123315,
+        "pair_precision": 0.8832743342356725,
+        "pair_recall": 0.8298048080685128,
+        "pair_macro_f1": 0.9167338835526837,
+        "pair_logloss": 0.10065614656560076,
+        "confusion_matrix": [
+          [
+            283053,
+            5045
+          ],
+          [
+            7830,
+            38176
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9012989537106022,
+        "obs_macro_f1": 0.8185149845465938,
+        "obs_logloss": 0.28429759969397356,
+        "route_continuity": 0.9518213286584998,
+        "pair_accuracy": 0.9752569580783,
+        "pair_precision": 0.9196850925800784,
+        "pair_recall": 0.8825589312927596,
+        "pair_macro_f1": 0.9433032972826114,
+        "pair_logloss": 0.06736662141683154,
+        "confusion_matrix": [
+          [
+            209234,
+            2377
+          ],
+          [
+            3622,
+            27219
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.9218446731720358,
+      "obs_macro_f1": 0.8222523092178516,
+      "obs_logloss": 0.19607888280261182,
+      "route_continuity": 0.942842151013533,
+      "pair_accuracy": 0.9811034126332709,
+      "pair_precision": 0.9400497871820233,
+      "pair_recall": 0.9148015767872689,
+      "pair_macro_f1": 0.9581976144957732,
+      "pair_logloss": 0.050764197771523994,
+      "confusion_matrix": [
+        [
+          1209029,
+          10789
+        ],
+        [
+          15756,
+          169177
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8910751565762004,
+      "obs_macro_f1": 0.8341194187567392,
+      "obs_logloss": 0.2960054375856511,
+      "route_continuity": 0.9513020689369661,
+      "pair_accuracy": 0.9724967655022475,
+      "pair_precision": 0.9066297743055556,
+      "pair_recall": 0.8742806319974887,
+      "pair_macro_f1": 0.9372208517999923,
+      "pair_logloss": 0.06934974186743469,
+      "confusion_matrix": [
+        [
+          129111,
+          1721
+        ],
+        [
+          2403,
+          16711
+        ]
+      ]
+    },
+    "train_time_s": 11.348292900016531,
+    "student_inf_time_ms": 205.78259998001158
+  },
+  "lightgbm": {
+    "spec": {
+      "name": "LightGBM",
+      "slug": "lightgbm",
+      "family": "Leaf-Wise Boosting",
+      "uses_scaled_features": false,
+      "key_config": "n_estimators=350, lr=0.05, num_leaves=63, min_child_samples=40",
+      "loss_objective": "Leaf-wise Gradient Boosted Binary Log Loss"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.9052518588333857,
+        "obs_macro_f1": 0.842551925774213,
+        "obs_logloss": 0.22222608624023787,
+        "route_continuity": 0.9457376677955973,
+        "pair_accuracy": 0.9795919040301785,
+        "pair_precision": 0.9219574214840263,
+        "pair_recall": 0.9116246723372385,
+        "pair_macro_f1": 0.9525661062096729,
+        "pair_logloss": 0.054564470677587386,
+        "confusion_matrix": [
+          [
+            262991,
+            2885
+          ],
+          [
+            3304,
+            34082
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9324304560212946,
+        "obs_macro_f1": 0.8238663512002709,
+        "obs_logloss": 0.19959620119797133,
+        "route_continuity": 0.9305776083172381,
+        "pair_accuracy": 0.9826369854851396,
+        "pair_precision": 0.9484479941913233,
+        "pair_recall": 0.9215980245171532,
+        "pair_macro_f1": 0.9624072562686143,
+        "pair_logloss": 0.0501859898529689,
+        "confusion_matrix": [
+          [
+            216021,
+            1704
+          ],
+          [
+            2667,
+            31350
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8631853643950309,
+        "obs_macro_f1": 0.7988425663895145,
+        "obs_logloss": 0.40297713309607514,
+        "route_continuity": 0.92933172522934,
+        "pair_accuracy": 0.9633223642067271,
+        "pair_precision": 0.8835850956696878,
+        "pair_recall": 0.8371452716517188,
+        "pair_macro_f1": 0.919320645211148,
+        "pair_logloss": 0.09647710478956749,
+        "confusion_matrix": [
+          [
+            232462,
+            4046
+          ],
+          [
+            5974,
+            30709
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8447982291844032,
+        "obs_macro_f1": 0.767231178571228,
+        "obs_logloss": 0.3925700361814957,
+        "route_continuity": 0.9476027224711798,
+        "pair_accuracy": 0.9617364652922443,
+        "pair_precision": 0.8877088973952012,
+        "pair_recall": 0.8266965178454985,
+        "pair_macro_f1": 0.9170256236686709,
+        "pair_logloss": 0.10018275741482446,
+        "confusion_matrix": [
+          [
+            283287,
+            4811
+          ],
+          [
+            7973,
+            38033
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9012665608499887,
+        "obs_macro_f1": 0.8191599120657018,
+        "obs_logloss": 0.28044520793371985,
+        "route_continuity": 0.9519472449278725,
+        "pair_accuracy": 0.9754961806873113,
+        "pair_precision": 0.9189662134876834,
+        "pair_recall": 0.8854447002366979,
+        "pair_macro_f1": 0.9439468743143002,
+        "pair_logloss": 0.06672631108673469,
+        "confusion_matrix": [
+          [
+            209203,
+            2408
+          ],
+          [
+            3533,
+            27308
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.9251490442454218,
+      "obs_macro_f1": 0.8260685629084626,
+      "obs_logloss": 0.186958359731246,
+      "route_continuity": 0.9445341278603708,
+      "pair_accuracy": 0.9819384360644698,
+      "pair_precision": 0.9431339113626643,
+      "pair_recall": 0.918164957038495,
+      "pair_macro_f1": 0.9600514373177889,
+      "pair_logloss": 0.04858382598728706,
+      "confusion_matrix": [
+        [
+          1209580,
+          10238
+        ],
+        [
+          15134,
+          169799
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8931628392484342,
+      "obs_macro_f1": 0.834395510350129,
+      "obs_logloss": 0.2912364684367664,
+      "route_continuity": 0.9523988677895993,
+      "pair_accuracy": 0.973257039200779,
+      "pair_precision": 0.9101227327033778,
+      "pair_recall": 0.8767918802971644,
+      "pair_macro_f1": 0.9389311707749237,
+      "pair_logloss": 0.06804214465292198,
+      "confusion_matrix": [
+        [
+          129177,
+          1655
+        ],
+        [
+          2355,
+          16759
+        ]
+      ]
+    },
+    "train_time_s": 6.734941500006244,
+    "student_inf_time_ms": 195.81169995944947
+  },
+  "xgboost": {
+    "spec": {
+      "name": "XGBoost",
+      "slug": "xgboost",
+      "family": "Depth-Wise Boosting",
+      "uses_scaled_features": false,
+      "key_config": "n_estimators=350, lr=0.05, max_depth=7, subsample=0.8, reg_lambda=2.0",
+      "loss_objective": "Regularized Depth-wise Binary Logistic Loss (hist)"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.9016127343177296,
+        "obs_macro_f1": 0.8414591370687277,
+        "obs_logloss": 0.23154849318528958,
+        "route_continuity": 0.9449770863586785,
+        "pair_accuracy": 0.9792225864104306,
+        "pair_precision": 0.9216287334183327,
+        "pair_recall": 0.9087358904402718,
+        "pair_macro_f1": 0.9516495192179264,
+        "pair_logloss": 0.05586682352067544,
+        "confusion_matrix": [
+          [
+            262987,
+            2889
+          ],
+          [
+            3412,
+            33974
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9318161874396701,
+        "obs_macro_f1": 0.8217207739570788,
+        "obs_logloss": 0.19998097514327434,
+        "route_continuity": 0.929411215060852,
+        "pair_accuracy": 0.9825098712173574,
+        "pair_precision": 0.9478555441292118,
+        "pair_recall": 0.9212452597230797,
+        "pair_macro_f1": 0.962135862699367,
+        "pair_logloss": 0.05033938265605124,
+        "confusion_matrix": [
+          [
+            216001,
+            1724
+          ],
+          [
+            2679,
+            31338
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.86258732704488,
+        "obs_macro_f1": 0.8008395823907555,
+        "obs_logloss": 0.40501735725332466,
+        "route_continuity": 0.9280451434773209,
+        "pair_accuracy": 0.9630807749889272,
+        "pair_precision": 0.880860325915743,
+        "pair_recall": 0.8384537796799607,
+        "pair_macro_f1": 0.9189453221918562,
+        "pair_logloss": 0.09725333715285044,
+        "confusion_matrix": [
+          [
+            232348,
+            4160
+          ],
+          [
+            5926,
+            30757
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8442022816277882,
+        "obs_macro_f1": 0.7656546597524809,
+        "obs_logloss": 0.38793619214714276,
+        "route_continuity": 0.9474245544870437,
+        "pair_accuracy": 0.9619190431721859,
+        "pair_precision": 0.8873629571006262,
+        "pair_recall": 0.8286310481241577,
+        "pair_macro_f1": 0.9175134838331411,
+        "pair_logloss": 0.09938099065230845,
+        "confusion_matrix": [
+          [
+            283259,
+            4839
+          ],
+          [
+            7884,
+            38122
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9035340610929351,
+        "obs_macro_f1": 0.8227173217060577,
+        "obs_logloss": 0.27791424513881685,
+        "route_continuity": 0.9526664633817957,
+        "pair_accuracy": 0.9759292561001766,
+        "pair_precision": 0.9216552561465043,
+        "pair_recall": 0.8860931876398301,
+        "pair_macro_f1": 0.9448868218277611,
+        "pair_logloss": 0.06617694490150285,
+        "confusion_matrix": [
+          [
+            209288,
+            2323
+          ],
+          [
+            3513,
+            27328
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.9211977008421334,
+      "obs_macro_f1": 0.8283240635288805,
+      "obs_logloss": 0.1964081719053349,
+      "route_continuity": 0.9443546742596162,
+      "pair_accuracy": 0.981079209055555,
+      "pair_precision": 0.9399748830282622,
+      "pair_recall": 0.9146880221485619,
+      "pair_macro_f1": 0.9581432914798476,
+      "pair_logloss": 0.0505737870626273,
+      "confusion_matrix": [
+        [
+          1209016,
+          10802
+        ],
+        [
+          15777,
+          169156
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.890553235908142,
+      "obs_macro_f1": 0.8356131666106048,
+      "obs_logloss": 0.2937538921473471,
+      "route_continuity": 0.9518967857194008,
+      "pair_accuracy": 0.9728769023515133,
+      "pair_precision": 0.9095313265472756,
+      "pair_recall": 0.8741759966516689,
+      "pair_macro_f1": 0.9380022218142345,
+      "pair_logloss": 0.06883257252899407,
+      "confusion_matrix": [
+        [
+          129170,
+          1662
+        ],
+        [
+          2405,
+          16709
+        ]
+      ]
+    },
+    "train_time_s": 8.725238299986813,
+    "student_inf_time_ms": 67.16099998448044
+  },
+  "candidate_set_resnet": {
+    "spec": {
+      "name": "CandidateSetResNet",
+      "slug": "candidate_set_resnet",
+      "family": "Set-Aware Neural Network",
+      "uses_scaled_features": true,
+      "key_config": "ResNet(28->96) + Candidate-Set Mean/Max Context, AdamW, CosineLR",
+      "loss_objective": "Hybrid Listwise Observation Softmax Cross-Entropy + Calibrated BCE"
+    },
+    "cv_folds": [
+      {
+        "obs_top1_acc": 0.8984186825845638,
+        "obs_macro_f1": 0.8418698414875161,
+        "obs_logloss": 0.2524192034220758,
+        "route_continuity": 0.9427938056671138,
+        "pair_accuracy": 0.9788664587056737,
+        "pair_precision": 0.9157205357382505,
+        "pair_recall": 0.9125608516557,
+        "pair_macro_f1": 0.9510441377831059,
+        "pair_logloss": 0.05825828183019431,
+        "confusion_matrix": [
+          [
+            262736,
+            3140
+          ],
+          [
+            3269,
+            34117
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9227484131394975,
+        "obs_macro_f1": 0.819546937238053,
+        "obs_logloss": 0.2148447316133566,
+        "route_continuity": 0.928365415314081,
+        "pair_accuracy": 0.9808256071692447,
+        "pair_precision": 0.9361663977048592,
+        "pair_recall": 0.920892494929006,
+        "pair_macro_f1": 0.9586978300536052,
+        "pair_logloss": 0.05255569245347214,
+        "confusion_matrix": [
+          [
+            215589,
+            2136
+          ],
+          [
+            2691,
+            31326
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8642727050316688,
+        "obs_macro_f1": 0.8076496090767515,
+        "obs_logloss": 0.41933641630837254,
+        "route_continuity": 0.929749252666197,
+        "pair_accuracy": 0.964120340714006,
+        "pair_precision": 0.8800079165370805,
+        "pair_recall": 0.8484856745631492,
+        "pair_macro_f1": 0.9216472123850417,
+        "pair_logloss": 0.09662227481895136,
+        "confusion_matrix": [
+          [
+            232264,
+            4244
+          ],
+          [
+            5558,
+            31125
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.8344542823088711,
+        "obs_macro_f1": 0.7676790295165611,
+        "obs_logloss": 0.42968761859043175,
+        "route_continuity": 0.948393476811188,
+        "pair_accuracy": 0.9578634197734837,
+        "pair_precision": 0.8565302840807576,
+        "pair_recall": 0.8336303960352998,
+        "pair_macro_f1": 0.9102722960819061,
+        "pair_logloss": 0.10846264004966279,
+        "confusion_matrix": [
+          [
+            281674,
+            6424
+          ],
+          [
+            7654,
+            38352
+          ]
+        ]
+      },
+      {
+        "obs_top1_acc": 0.9125068834828803,
+        "obs_macro_f1": 0.8271934632725348,
+        "obs_logloss": 0.2698870427483251,
+        "route_continuity": 0.9554112933274169,
+        "pair_accuracy": 0.9780616369425701,
+        "pair_precision": 0.9281640048315662,
+        "pair_recall": 0.8969553516422943,
+        "pair_macro_f1": 0.9498778494150133,
+        "pair_logloss": 0.06200882371968233,
+        "confusion_matrix": [
+          [
+            209470,
+            2141
+          ],
+          [
+            3178,
+            27663
+          ]
+        ]
+      }
+    ],
+    "train_eval": {
+      "obs_top1_acc": 0.9272343269616361,
+      "obs_macro_f1": 0.8305370550883608,
+      "obs_logloss": 0.19449222886194062,
+      "route_continuity": 0.9443191361728374,
+      "pair_accuracy": 0.9824630842049588,
+      "pair_precision": 0.9389609393826538,
+      "pair_recall": 0.9270546630401281,
+      "pair_macro_f1": 0.9614408478059999,
+      "pair_logloss": 0.04883008757607653,
+      "confusion_matrix": [
+        [
+          1208673,
+          11145
+        ],
+        [
+          13490,
+          171443
+        ]
+      ]
+    },
+    "student_test_eval": {
+      "obs_top1_acc": 0.8973382045929019,
+      "obs_macro_f1": 0.8469785356664266,
+      "obs_logloss": 0.2982887319924599,
+      "route_continuity": 0.9531081897225075,
+      "pair_accuracy": 0.9745375001667267,
+      "pair_precision": 0.9124689893215403,
+      "pair_recall": 0.8851627079627498,
+      "pair_macro_f1": 0.9420245254929779,
+      "pair_logloss": 0.06717230050366328,
+      "confusion_matrix": [
+        [
+          129209,
+          1623
+        ],
+        [
+          2195,
+          16919
+        ]
+      ]
+    },
+    "train_time_s": 269.9912307999912,
+    "student_inf_time_ms": 107.10910003399476
+  }
+}

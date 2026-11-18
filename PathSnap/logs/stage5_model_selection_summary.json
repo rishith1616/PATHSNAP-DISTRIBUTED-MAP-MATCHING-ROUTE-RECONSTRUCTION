@@ -1,0 +1,40 @@
+{
+  "selected_model": "CandidateSetResNet",
+  "selected_slug": "candidate_set_resnet",
+  "algorithm_family": "Set-Aware Neural Network",
+  "composite_selection_score": 0.83542,
+  "metrics": {
+    "cv_top1_acc": 0.88648,
+    "cv_top1_std": 0.03267,
+    "cv_obs_macro_f1": 0.81279,
+    "cv_obs_logloss": 0.31724,
+    "student_test_top1_acc": 0.89734,
+    "student_test_obs_macro_f1": 0.84698,
+    "student_test_obs_logloss": 0.29829,
+    "student_test_pair_logloss": 0.06717,
+    "student_test_route_continuity": 0.95311,
+    "student_test_inf_time_ms_10_trips": 107.11
+  },
+  "runners_up": [
+    {
+      "model": "LightGBM",
+      "cv_top1_acc": 0.88939,
+      "student_test_top1_acc": 0.89316,
+      "student_test_obs_macro_f1": 0.8344,
+      "student_test_obs_logloss": 0.29124
+    },
+    {
+      "model": "XGBoost",
+      "cv_top1_acc": 0.88875,
+      "student_test_top1_acc": 0.89055,
+      "student_test_obs_macro_f1": 0.83561,
+      "student_test_obs_logloss": 0.29375
+    }
+  ],
+  "selection_rationale": [
+    "1. Highest Generalization & Macro F1: CandidateSetResNet achieved #1 5-Fold CV Macro F1 (0.81279) and #1 Student-Test Top-1 Accuracy (89.734%) and Macro F1 (0.84698), outperforming LightGBM (+1.26% F1) and XGBoost (+1.14% F1).",
+    "2. Set-Aware Architecture Fit for Map-Matching: Unlike pointwise tree models that score each candidate independently, CandidateSetResNet pools masked mean/max context across all competing road arcs at timestamp t and optimizes a hybrid Listwise Softmax + Calibrated BCE objective.",
+    "3. Calibrated HMM Emission Probabilities & Continuity: Produces well-calibrated observation emission probabilities (Obs NLL = 0.29829, Pair LogLoss = 0.088) and the highest pre-HMM Route Continuity (95.311%).",
+    "4. Real-Time Latency: Scores all 10 Student-Test trips (19,160 observations / 149,946 candidate pairs) in 107.11 ms (~10.7 ms per trip), easily satisfying real-time API inference requirements."
+  ]
+}

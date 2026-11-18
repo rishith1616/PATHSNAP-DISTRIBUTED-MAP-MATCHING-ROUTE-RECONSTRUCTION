@@ -1,0 +1,30 @@
+{
+  "partitions": {
+    "train": 80,
+    "student_test": 10,
+    "eval_test_untouched": 10
+  },
+  "train_metrics": {
+    "total_gps": 208417,
+    "pct_1s_steps": 96.501,
+    "unbiased_gps_to_route_median_m": 5.613,
+    "unbiased_gps_to_route_p95_m": 140.272,
+    "pct_gps_gt_75m_from_route": 9.994,
+    "trips_with_revisited_arcs": 9,
+    "anomalous_trips_count": 32
+  },
+  "student_test_metrics": {
+    "total_gps": 19160,
+    "pct_1s_steps": 98.621,
+    "unbiased_gps_to_route_median_m": 5.164,
+    "unbiased_gps_to_route_p95_m": 16.783,
+    "pct_gps_gt_75m_from_route": 0.084,
+    "trips_with_revisited_arcs": 1
+  },
+  "data_quality_findings_and_decisions": [
+    "1. Global Multi-Continent Span: 25+ UTM zones detected; dynamic per-trip UTM CRS projection is mandatory.",
+    "2. Path-Level Reference Routes & Loops: .route lists traversed arc_ids sequentially (not 1-to-1 per GPS ping) and contains revisited arcs in multiple trips.",
+    "3. Multi-Minute/Multi-Hour GPS Dropouts: Training trips contain >30s gaps and >75m GPS-to-route dropouts; Stage 3 DP ground-truth aligner must scale allowed arc jumps dynamically with delta_t and displacement rather than capping at 8 arcs.",
+    "4. 1 Hz GPS Jitter (~4-6m median): Single-second consecutive headings are noisy; Stage 3 must engineer multi-second smoothed bearings, multi-step trajectory consistency, and 1-step graph reachability features."
+  ]
+}
