@@ -1,0 +1,27 @@
+{
+  "feature_columns": [
+    "perp_dist_m",
+    "abs_cross_track_m",
+    "signed_cross_track_m",
+    "t_proj",
+    "is_interior_proj",
+    "heading_diff_rad",
+    "cos_heading_diff",
+    "effective_heading_penalty",
+    "speed_mps",
+    "dt_s",
+    "arc_length_m",
+    "log_arc_length",
+    "from_node_in_degree",
+    "to_node_out_degree",
+    "dist_rank",
+    "dist_diff_from_best_m",
+    "dist_ratio_to_best",
+    "num_candidates"
+  ],
+  "num_features": 18,
+  "candidate_radius_m": 75.0,
+  "candidate_top_k": 10,
+  "fallback_nearest": true,
+  "scaler_fitted_on": "train (80 trips)"
+}

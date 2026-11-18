@@ -1,0 +1,35 @@
+{
+  "partition_analyzed": "train",
+  "total_trips": 80,
+  "trips_with_route": 80,
+  "route_len_matches_gps_len_count": 0,
+  "total_gps_observations": 208417,
+  "gps_per_trip_min": 361,
+  "gps_per_trip_median": 1529.0,
+  "gps_per_trip_max": 19313,
+  "invalid_gps_rows_total": 0,
+  "non_monotonic_ts_total": 0,
+  "duplicate_ts_total": 0,
+  "pct_steps_exactly_1s": 96.501,
+  "max_time_gap_seconds": 153064.0,
+  "total_gaps_gt_5s": 1216,
+  "lon_bounds": [
+    -100.418538,
+    137.237029
+  ],
+  "lat_bounds": [
+    -34.640291,
+    61.267258
+  ],
+  "centroid_lon_lat": [
+    15.041646,
+    40.435837
+  ],
+  "recommended_utm_epsg": 32633,
+  "recommended_utm_name": "WGS 84 / UTM zone 33N (EPSG:32633)",
+  "nodes_per_trip_median": 9608.0,
+  "arcs_per_trip_median": 19526.5,
+  "isolated_nodes_total": 0,
+  "weak_components_max": 421,
+  "route_discontinuities_total": 13
+}
